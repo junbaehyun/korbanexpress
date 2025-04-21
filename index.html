@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>무게별 요금 계산기</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input { padding: 8px; width: 100px; margin-bottom: 10px; display: block; }
+    #result { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>📦 KORBAN EXPRESS 특송 요금 계산기</h2>
+  
+  <label for="weight">실무게 (kg): </label>
+  <input type="number" id="weight" step="0.1" placeholder="예: 1.5" />
+
+  <label for="width">가로 (cm): </label>
+  <input type="number" id="width" step="1" placeholder="예: 34" />
+
+  <label for="length">세로 (cm): </label>
+  <input type="number" id="length" step="1" placeholder="예: 25" />
+
+  <label for="height">높이 (cm): </label>
+  <input type="number" id="height" step="1" placeholder="예: 21" />
+
+  <div id="result"></div>
+
+  <script>
+    const rates = [
+    { weight: 0.5, price: 64400 },
+    { weight: 1, price: 77200 },
+    { weight: 1.5, price: 88100 },
+    { weight: 2, price: 99100 },
+    { weight: 2.5, price: 110000 },
+    { weight: 3, price: 120800 },
+    { weight: 3.5, price: 131800 },
+    { weight: 4, price: 142800 },
+    { weight: 4.5, price: 153700 },
+    { weight: 5, price: 164600 },
+    { weight: 5.5, price: 175000 },
+    { weight: 6, price: 185500 },
+    { weight: 6.5, price: 195800 },
+    { weight: 7, price: 206200 },
+    { weight: 7.5, price: 216600 },
+    { weight: 8, price: 227100 },
+    { weight: 8.5, price: 237500 },
+    { weight: 9, price: 247800 },
+    { weight: 9.5, price: 258200 },
+    { weight: 10, price: 268800 },
+    { weight: 10.5, price: 279100 },
+    { weight: 11, price: 289400 },
+    { weight: 11.5, price: 299600 },
+    { weight: 12, price: 309900 },
+    { weight: 12.5, price: 320200 },
+    { weight: 13, price: 330400 },
+    { weight: 13.5, price: 340800 },
+    { weight: 14, price: 351100 },
+    { weight: 14.5, price: 361400 },
+    { weight: 15, price: 371600 },
+    { weight: 15.5, price: 382000 },
+    { weight: 16, price: 392500 },
+    { weight: 16.5, price: 402900 },
+    { weight: 17, price: 413300 },
+    { weight: 17.5, price: 423600 },
+    { weight: 18, price: 434100 },
+    { weight: 18.5, price: 444500 },
+    { weight: 19, price: 454900 },
+    { weight: 19.5, price: 465300 },
+    { weight: 20, price: 475700 },
+    { weight: 21, price: 496300 },
+    { weight: 22, price: 516800 },
+    { weight: 23, price: 537400 },
+    { weight: 24, price: 558000 },
+    { weight: 25, price: 578600 },
+    { weight: 26, price: 598900 },
+    { weight: 27, price: 619200 },
+    { weight: 28, price: 639500 },
+    { weight: 29, price: 659900 },
+    { weight: 30, price: 680200 },
+    { weight: 31, price: 705900 },
+    { weight: 32, price: 725700 },
+    { weight: 33, price: 745600 },
+    { weight: 34, price: 765300 },
+    { weight: 35, price: 785100 },
+    { weight: 36, price: 805000 },
+    { weight: 37, price: 824600 },
+    { weight: 38, price: 844400 },
+    { weight: 39, price: 864300 },
+    { weight: 40, price: 884100 },
+    { weight: 41, price: 903600 },
+    { weight: 42, price: 923200 },
+    { weight: 43, price: 942700 },
+    { weight: 44, price: 962200 },
+    { weight: 45, price: 981800 },
+    { weight: 46, price: 1001300 },
+    { weight: 47, price: 1020900 },
+    { weight: 48, price: 1040300 },
+    { weight: 49, price: 1059900 },
+    { weight: 50, price: 1079500 },
+    { weight: 51, price: 1097800 },
+    { weight: 52, price: 1116000 },
+    { weight: 53, price: 1134300 },
+    { weight: 54, price: 1152500 },
+    { weight: 55, price: 1170800 },
+    { weight: 56, price: 1188900 },
+    { weight: 57, price: 1207200 },
+    { weight: 58, price: 1225400 },
+    { weight: 59, price: 1243700 },
+    { weight: 60, price: 1262000 },
+    { weight: 61, price: 1280300 },
+    { weight: 62, price: 1298500 },
+    { weight: 63, price: 1316800 },
+    { weight: 64, price: 1335000 },
+    { weight: 65, price: 1353300 },
+    { weight: 66, price: 1371500 },
+    { weight: 67, price: 1389800 },
+    { weight: 68, price: 1408000 },
+    { weight: 69, price: 1426300 },
+    { weight: 70, price: 1444700 }
+    ];
+
+    function calculate() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const width = parseFloat(document.getElementById('width').value);
+      const length = parseFloat(document.getElementById('length').value);
+      const height = parseFloat(document.getElementById('height').value);
+
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(weight)) {
+        resultDiv.textContent = '';
+        return;
+      }
+
+      // 부피무게 계산
+      let volWeight = 0;
+      if (!isNaN(width) && !isNaN(length) && !isNaN(height)) {
+        volWeight = (width * length * height) / 5000;
+      }
+
+      const chargeableWeight = Math.max(weight, volWeight); // 둘 중 큰 값 사용
+
+      const matched = rates.find(rate => rate.weight >= chargeableWeight);
+
+      if (matched) {
+        resultDiv.textContent = `💰 예상 요금: ${matched.price.toLocaleString()} 원 (청구무게: ${chargeableWeight.toFixed(2)} kg)`;
+      } else {
+        resultDiv.textContent = '❗ 요금표에 해당하는 무게가 없습니다.';
+      }
+    }
+
+    document.getElementById('weight').addEventListener('input', calculate);
+    document.getElementById('width').addEventListener('input', calculate);
+    document.getElementById('length').addEventListener('input', calculate);
+    document.getElementById('height').addEventListener('input', calculate);
+  </script>
+</body>
+</html>
