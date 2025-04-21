@@ -4,9 +4,47 @@
   <meta charset="UTF-8" />
   <title>무게별 요금 계산기</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input { padding: 8px; width: 100px; margin-bottom: 10px; display: block; }
-    #result { margin-top: 10px; font-weight: bold; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+  
+    input {
+      padding: 8px;
+      width: 100px;
+      margin-bottom: 10px;
+      display: block;
+    }
+  
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  
+    /* ✅ Mobile friendly layout */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+        font-size: 16px;
+      }
+  
+      input {
+        width: 100%;
+        font-size: 16px;
+      }
+  
+      label {
+        font-size: 14px;
+      }
+  
+      h2 {
+        font-size: 18px;
+      }
+  
+      #result {
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
