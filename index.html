@@ -3,12 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>무게별 요금 계산기</title>
+  <title>📦 KORBAN EXPRESS 특송 요금 계산기</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: sans-serif;
       background-color: #f4f4f4;
@@ -22,204 +18,229 @@
       padding: 30px;
       border-radius: 10px;
       width: 100%;
-      max-width: 500px;
+      max-width: 700px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
       text-align: center;
       margin-bottom: 30px;
-      font-size: 22px;
     }
 
     label {
       font-weight: bold;
       display: block;
-      margin-bottom: 6px;
+      margin-top: 10px;
     }
 
     input {
-      padding: 12px;
+      padding: 10px;
       width: 100%;
-      margin-bottom: 20px;
-      font-size: 16px;
+      margin-bottom: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
 
-    #result {
+    .box-group {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background-color: #fafafa;
+    }
+
+    #result, #quote {
       margin-top: 20px;
       font-weight: bold;
-      text-align: center;
+      background: #f0f0f0;
+      padding: 20px;
+      border-radius: 8px;
+      white-space: pre-wrap;
     }
 
-    @media (max-width: 600px) {
-      body {
-        padding: 20px;
-      }
-
-      h2 {
-        font-size: 20px;
-      }
-
-      label {
-        font-size: 16px;
-      }
-
-      input {
-        font-size: 16px;
-        padding: 10px;
-      }
-
-      #result {
-        font-size: 16px;
-      }
-    }
+    .rate-table {
+  margin-top: 30px;
+  background: #fffdf5;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.rate-table h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>📦 KORBAN EXPRESS 특송 요금 계산기</h2>
+    <h2>📦 KORBAN EXPRESS 특송 요금 계산기 (핸드캐리)</h2>
 
-    <label for="weight">실무게 (kg):</label>
-    <input type="number" id="weight" step="0.1" placeholder="예: 1.5" />
+    <label for="boxCount">박스 개수:</label>
+    <input type="number" id="boxCount" min="1" value="1" />
 
-    <label for="width">가로 (cm):</label>
-    <input type="number" id="width" step="1" placeholder="예: 34" />
-
-    <label for="length">세로 (cm):</label>
-    <input type="number" id="length" step="1" placeholder="예: 25" />
-
-    <label for="height">높이 (cm):</label>
-    <input type="number" id="height" step="1" placeholder="예: 21" />
+    <div id="boxInputs"></div>
 
     <div id="result"></div>
+    <div id="quote"></div>
+    <div id="rateTable" class="rate-table"></div>
   </div>
 
   <script>
     const rates = [
-      { weight: 0.5, price: 64400 },
-      { weight: 1, price: 77200 },
-      { weight: 1.5, price: 88100 },
-      { weight: 2, price: 99100 },
-      { weight: 2.5, price: 110000 },
-      { weight: 3, price: 120800 },
-      { weight: 3.5, price: 131800 },
-      { weight: 4, price: 142800 },
-      { weight: 4.5, price: 153700 },
-      { weight: 5, price: 164600 },
-      { weight: 5.5, price: 175000 },
-      { weight: 6, price: 185500 },
-      { weight: 6.5, price: 195800 },
-      { weight: 7, price: 206200 },
-      { weight: 7.5, price: 216600 },
-      { weight: 8, price: 227100 },
-      { weight: 8.5, price: 237500 },
-      { weight: 9, price: 247800 },
-      { weight: 9.5, price: 258200 },
-      { weight: 10, price: 268800 },
-      { weight: 10.5, price: 279100 },
-      { weight: 11, price: 289400 },
-      { weight: 11.5, price: 299600 },
-      { weight: 12, price: 309900 },
-      { weight: 12.5, price: 320200 },
-      { weight: 13, price: 330400 },
-      { weight: 13.5, price: 340800 },
-      { weight: 14, price: 351100 },
-      { weight: 14.5, price: 361400 },
-      { weight: 15, price: 371600 },
-      { weight: 15.5, price: 382000 },
-      { weight: 16, price: 392500 },
-      { weight: 16.5, price: 402900 },
-      { weight: 17, price: 413300 },
-      { weight: 17.5, price: 423600 },
-      { weight: 18, price: 434100 },
-      { weight: 18.5, price: 444500 },
-      { weight: 19, price: 454900 },
-      { weight: 19.5, price: 465300 },
-      { weight: 20, price: 475700 },
-      { weight: 21, price: 496300 },
-      { weight: 22, price: 516800 },
-      { weight: 23, price: 537400 },
-      { weight: 24, price: 558000 },
-      { weight: 25, price: 578600 },
-      { weight: 26, price: 598900 },
-      { weight: 27, price: 619200 },
-      { weight: 28, price: 639500 },
-      { weight: 29, price: 659900 },
-      { weight: 30, price: 680200 },
-      { weight: 31, price: 705900 },
-      { weight: 32, price: 725700 },
-      { weight: 33, price: 745600 },
-      { weight: 34, price: 765300 },
-      { weight: 35, price: 785100 },
-      { weight: 36, price: 805000 },
-      { weight: 37, price: 824600 },
-      { weight: 38, price: 844400 },
-      { weight: 39, price: 864300 },
-      { weight: 40, price: 884100 },
-      { weight: 41, price: 903600 },
-      { weight: 42, price: 923200 },
-      { weight: 43, price: 942700 },
-      { weight: 44, price: 962200 },
-      { weight: 45, price: 981800 },
-      { weight: 46, price: 1001300 },
-      { weight: 47, price: 1020900 },
-      { weight: 48, price: 1040300 },
-      { weight: 49, price: 1059900 },
-      { weight: 50, price: 1079500 },
-      { weight: 51, price: 1097800 },
-      { weight: 52, price: 1116000 },
-      { weight: 53, price: 1134300 },
-      { weight: 54, price: 1152500 },
-      { weight: 55, price: 1170800 },
-      { weight: 56, price: 1188900 },
-      { weight: 57, price: 1207200 },
-      { weight: 58, price: 1225400 },
-      { weight: 59, price: 1243700 },
-      { weight: 60, price: 1262000 },
-      { weight: 61, price: 1280300 },
-      { weight: 62, price: 1298500 },
-      { weight: 63, price: 1316800 },
-      { weight: 64, price: 1335000 },
-      { weight: 65, price: 1353300 },
-      { weight: 66, price: 1371500 },
-      { weight: 67, price: 1389800 },
-      { weight: 68, price: 1408000 },
-      { weight: 69, price: 1426300 },
-      { weight: 70, price: 1444700 }
+      { weight: 0.5, price: 64400 }, { weight: 1, price: 77200 },
+      { weight: 1.5, price: 88100 }, { weight: 2, price: 99100 },
+      { weight: 2.5, price: 110000 }, { weight: 3, price: 120800 },
+      { weight: 3.5, price: 131800 }, { weight: 4, price: 142800 },
+      { weight: 4.5, price: 153700 }, { weight: 5, price: 164600 },
+      { weight: 5.5, price: 175000 }, { weight: 6, price: 185500 },
+      { weight: 6.5, price: 195800 }, { weight: 7, price: 206200 },
+      { weight: 7.5, price: 216600 }, { weight: 8, price: 227100 },
+      { weight: 8.5, price: 237500 }, { weight: 9, price: 247800 },
+      { weight: 9.5, price: 258200 }, { weight: 10, price: 268800 },
+      { weight: 11, price: 289400 }, { weight: 12, price: 309900 },
+      { weight: 13, price: 330400 }, { weight: 14, price: 351100 },
+      { weight: 15, price: 371600 }, { weight: 16, price: 392500 },
+      { weight: 17, price: 413300 }, { weight: 18, price: 434100 },
+      { weight: 19, price: 454900 }, { weight: 20, price: 475700 },
+      { weight: 21, price: 496300 }, { weight: 22, price: 516800 },
+      { weight: 23, price: 537400 }, { weight: 24, price: 558000 },
+      { weight: 25, price: 578600 }, { weight: 26, price: 598900 },
+      { weight: 27, price: 619200 }, { weight: 28, price: 639500 },
+      { weight: 29, price: 659900 }, { weight: 30, price: 680200 },
+      { weight: 31, price: 705900 }, { weight: 32, price: 725700 },
+      { weight: 33, price: 745600 }, { weight: 34, price: 765300 },
+      { weight: 35, price: 785100 }, { weight: 36, price: 805000 },
+      { weight: 37, price: 824600 }, { weight: 38, price: 844400 },
+      { weight: 39, price: 864300 }, { weight: 40, price: 884100 }
     ];
 
-    function calculate() {
-      const weight = parseFloat(document.getElementById('weight').value);
-      const width = parseFloat(document.getElementById('width').value);
-      const length = parseFloat(document.getElementById('length').value);
-      const height = parseFloat(document.getElementById('height').value);
-      const resultDiv = document.getElementById('result');
+    const boxInputsContainer = document.getElementById('boxInputs');
+    const resultDiv = document.getElementById('result');
+    const quoteDiv = document.getElementById('quote');
+    const boxCountInput = document.getElementById('boxCount');
 
-      if (isNaN(weight)) {
-        resultDiv.textContent = '';
-        return;
+    boxCountInput.addEventListener('input', generateBoxInputs);
+
+    function generateBoxInputs() {
+      const count = parseInt(boxCountInput.value);
+      boxInputsContainer.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        const box = document.createElement('div');
+        box.className = 'box-group';
+        box.innerHTML = `
+          <h4>📦 박스 ${i + 1}</h4>
+          <label>실무게 (kg):</label>
+          <input type="number" class="weight" step="0.1" />
+          <label>가로 (cm):</label>
+          <input type="number" class="width" />
+          <label>세로 (cm):</label>
+          <input type="number" class="length" />
+          <label>높이 (cm):</label>
+          <input type="number" class="height" />
+        `;
+        boxInputsContainer.appendChild(box);
       }
 
-      let volWeight = 0;
-      if (!isNaN(width) && !isNaN(length) && !isNaN(height)) {
-        volWeight = (width * length * height) / 5000;
-      }
+      document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', calculateTotal);
+      });
 
-      const chargeableWeight = Math.max(weight, volWeight);
-      const matched = rates.find(rate => rate.weight >= chargeableWeight);
-
-      if (matched) {
-        resultDiv.textContent = `💰 예상 요금: ${matched.price.toLocaleString()} 원 (청구무게: ${chargeableWeight.toFixed(2)} kg)`;
-      } else {
-        resultDiv.textContent = '❗ 요금표에 해당하는 무게가 없습니다.';
-      }
+      calculateTotal();
     }
 
-    ['weight', 'width', 'length', 'height'].forEach(id => {
-      document.getElementById(id).addEventListener('input', calculate);
-    });
+    function calculateTotal() {
+      const weights = document.querySelectorAll('.weight');
+      const widths = document.querySelectorAll('.width');
+      const lengths = document.querySelectorAll('.length');
+      const heights = document.querySelectorAll('.height');
+
+      let totalChargeableWeight = 0;
+      let boxCount = weights.length;
+      let customerQuote = `📬 고객 발송용 견적서\n\n`;
+      let internalReport = `📄 KORBAN EXPRESS 특송 요율 산출 근거서 (핸드캐리)\n\n`;
+
+      internalReport += `1. 기본 정보\n----------------------------------\n`;
+      internalReport += `고객명         : [고객 성함 또는 회사명]\n`;
+      internalReport += `담당자         : [담당 직원 이름]\n`;
+      internalReport += `출발지         : [예: 서울]\n`;
+      internalReport += `도착지         : [예: 방글라데시 다카]\n`;
+      internalReport += `수출일자       : [YYYY-MM-DD]\n`;
+      internalReport += `상품명/품목    : [예: 의류, 기계 부품 등]\n`;
+      internalReport += `박스 개수      : ${boxCount}\n\n`;
+      internalReport += `2. 박스별 산출 내역\n----------------------------------\n`;
+
+      for (let i = 0; i < boxCount; i++) {
+        const w = parseFloat(weights[i].value) || 0;
+        const width = parseFloat(widths[i].value) || 0;
+        const length = parseFloat(lengths[i].value) || 0;
+        const height = parseFloat(heights[i].value) || 0;
+
+        const volWeight = (width * length * height) / 5000;
+        const chargeable = Math.max(w, volWeight);
+        totalChargeableWeight += chargeable;
+
+        internalReport += `[박스 ${i + 1}]\n`;
+        internalReport += ` - 실제무게: ${w.toFixed(2)} kg\n`;
+        internalReport += ` - CBM 계산식: (${width} × ${length} × ${height}) ÷ 5000 = ${volWeight.toFixed(2)} kg\n`;
+        internalReport += ` - 청구무게: ${chargeable.toFixed(2)} kg\n\n`;
+      }
+
+      totalChargeableWeight = Math.ceil(totalChargeableWeight * 10) / 10;
+      const matchedRate = rates.find(rate => rate.weight >= totalChargeableWeight);
+
+      if (matchedRate) {
+        customerQuote += `총 박스 수: ${boxCount}개\n`;
+        customerQuote += `청구무게: ${totalChargeableWeight.toFixed(1)} kg\n`;
+        customerQuote += `예상 운임: ${matchedRate.price.toLocaleString()} 원 (VAT 별도)\n`;
+        customerQuote += `배송 방식: 핸드캐리 특송\n`;
+
+        internalReport += `3. 청구 기준 및 요금\n----------------------------------\n`;
+        internalReport += `- 총 청구무게: ${totalChargeableWeight.toFixed(1)} kg\n`;
+        internalReport += `- 요율 기준 구간: ${matchedRate.weight}kg \n`;
+        internalReport += `- 적용 운임 단가: ${matchedRate.price.toLocaleString()} 원 (VAT 별도)\n`;
+        internalReport += `- 할인/조정 여부: 없음\n\n`;
+
+        internalReport += `4. 비고\n----------------------------------\n`;
+        internalReport += `- 핸드캐리 특송 기준 요율 적용\n`;
+        internalReport += `- 고객 요청사항 없음\n`;
+        internalReport += `- 송장 및 출고 후 회신 예정\n\n`;
+
+        internalReport += `5. 결재\n----------------------------------\n`;
+        internalReport += `작성자: ____________________\n`;
+        internalReport += `검토자: ____________________\n`;
+        internalReport += `승인자: ____________________\n`;
+        internalReport += `일자:   [YYYY-MM-DD]\n`;
+      } else {
+        customerQuote += `❗ 요금표에 해당하는 무게가 없습니다.\n`;
+        internalReport += `⚠️ 요금표 범위를 초과했습니다.\n`;
+      }
+
+      resultDiv.textContent = customerQuote;
+      quoteDiv.textContent = internalReport;
+
+      
+    }
+
+    generateBoxInputs();
+
+    function renderRateTable() {
+  const rateDiv = document.getElementById('rateTable');
+  let tableText = `<h3>📊 요율 기준표 (담당자용)</h3>`;
+  tableText += `<pre>`;
+  rates.forEach(rate => {
+    tableText += ` - ${rate.weight.toFixed(1)} kg : ${rate.price.toLocaleString()} 원\n`;
+  });
+  tableText += `</pre>`;
+  rateDiv.innerHTML = tableText;
+}
+
+renderRateTable();
   </script>
 </body>
 </html>
