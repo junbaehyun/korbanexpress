@@ -65,6 +65,7 @@
     .kpi div{background:#fcfcff;border:1px solid var(--line);border-radius:10px;padding:10px}
     .kpi b{font-size:16px}
     .small{font-size:12px;color:#666}
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -78,16 +79,16 @@
         <label><input type="radio" name="cust" value="company"> 기업(Private Company)</label>
       </div>
       <div>
-        <span class="pill">부피 분모</span>
-        <select id="divisor">
+        <span class="pill" hidden>부피 분모</span>
+        <select id="divisor" hidden>
           <option value="5000" selected>5000 (코반)</option>
           <!-- <option value="6000">6000 (EMS)</option> -->
         </select>
       </div>
       <div class="right">
-        <span class="pill">올림 단위</span>
-        <select id="rounding">
-          <option value="1" selected>1 kg </option>
+        <span class="pill" hidden>올림 단위</span>
+        <select id="rounding" hidden>
+          <option value="0.5" selected>0.5 kg </option>
           <!-- <option value="0.1">0.1 kg</option> -->
         </select>
         <button id="addBox" class="btn">박스 추가</button>
@@ -110,7 +111,7 @@
     <div class="kpi" id="kpi">
       <div><div class="small">총 실제무게</div><b id="realSum">0.0 kg</b></div>
       <div><div class="small">총 부피무게</div><b id="volSum">0.0 kg</b></div>
-      <div><div class="small">청구무게(올림)</div><b id="chgWeight">0 kg</b></div>
+      <div><div class="small">청구무게</div><b id="chgWeight">0 kg</b></div>
     </div>
 
     <div class="panel" id="customerOut"></div>
@@ -299,7 +300,7 @@ function calc(){
   // Internal text
   linesInternal += `2. 청구 기준 및 요금\n----------------------------------\n`;
   linesInternal += `- 총 실제무게: ${realSum.toFixed(1)} kg\n- 총 부피무게: ${volSum.toFixed(1)} kg\n`;
-  linesInternal += `- 총 청구무게(올림): ${charged.toFixed(roundUnit===1?0:1)} kg\n`;
+  linesInternal += `- 총 청구무게: ${charged.toFixed(roundUnit===1?0:1)} kg\n`;
   linesInternal += `- 요율 기준 구간: ${bracket} kg\n- 적용 운임 단가: ${fmt(price)} 원\n- 고객유형: ${(document.querySelector('input[name="cust"]:checked').value==='company'?'기업(Private Company)':'개인(Premium)')}\n`;
 
   customerOut.textContent = linesCustomer;
