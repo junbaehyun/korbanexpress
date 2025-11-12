@@ -4,243 +4,324 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>📦 KORBAN EXPRESS 특송 요금 계산기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f4f4f4;
-      padding: 40px;
-      display: flex;
-      justify-content: center;
+    :root{
+      --brand:#103d8f;
+      --ink:#222;
+      --muted:#777;
+      --bg:#f6f7fb;
+      --card:#fff;
+      --line:#e6e7ee;
+      --accent:#ffcc00;
     }
-
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 700px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    *{box-sizing:border-box}
+    body{
+      font-family:"Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      padding:40px 16px;
+      display:flex;justify-content:center;align-items:flex-start;
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
+    .container{
+      width:100%;max-width:880px;background:var(--card);border-radius:16px;
+      box-shadow:0 8px 30px rgba(16,61,143,.08);
+      padding:28px;
     }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
+    h2{margin:0 0 18px;font-weight:800;color:var(--brand);text-align:center}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+    .row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input,select{
+      width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;
+      font-size:14px;color:var(--ink);
     }
-
-    input {
-      padding: 10px;
-      width: 100%;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    .box{
+      border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fffefc;
     }
-
-    .box-group {
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      background-color: #fafafa;
+    .controls{
+      display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 18px;
+      align-items:center;justify-content:space-between;border:1px dashed var(--line);
+      padding:12px;border-radius:12px;background:#fafbff;
     }
-
-    #result, #quote {
-      margin-top: 20px;
-      font-weight: bold;
-      background: #f0f0f0;
-      padding: 20px;
-      border-radius: 8px;
-      white-space: pre-wrap;
+    .controls > div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .pill{
+      background:#f1f3ff;border:1px solid #dfe3ff;padding:6px 10px;border-radius:999px;font-size:13px
     }
-
-    .rate-table {
-  margin-top: 30px;
-  background: #fffdf5;
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 10px;
-  max-height: 300px;
-  overflow-y: auto;
-  font-size: 14px;
-  line-height: 1.6;
-}
-.rate-table h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 18px;
-}
+    .btn{
+      background:var(--brand);color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer
+    }
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .panel{background:#f9fafc;border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;white-space:pre-wrap}
+    .panel h3{margin:0 0 8px;color:#333}
+    .table{
+      border:1px solid var(--line);border-radius:12px;margin-top:16px;overflow:hidden;background:#fff
+    }
+    .table header{padding:10px 14px;font-weight:700;background:#f7f7ff;border-bottom:1px solid var(--line)}
+    .rates{max-height:300px;overflow:auto;padding:10px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6}
+    .right{display:flex;gap:10px;align-items:center}
+    .kpi{
+      background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;display:grid;gap:8px;grid-template-columns:repeat(3,1fr)
+    }
+    .kpi div{background:#fcfcff;border:1px solid var(--line);border-radius:10px;padding:10px}
+    .kpi b{font-size:16px}
+    .small{font-size:12px;color:#666}
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>📦 KORBAN EXPRESS 특송 요금 계산기 (핸드캐리)</h2>
+    <h2>📦 KORBAN EXPRESS 특송 요금 계산기</h2>
 
-    <label for="boxCount">박스 개수:</label>
-    <input type="number" id="boxCount" min="1" value="1" />
+    <div class="controls">
+      <div>
+        <span class="pill">고객유형</span>
+        <label><input type="radio" name="cust" value="premium" checked> 개인(Premium)</label>
+        <label><input type="radio" name="cust" value="company"> 기업(Private Company)</label>
+      </div>
+      <div>
+        <span class="pill">부피 분모</span>
+        <select id="divisor">
+          <option value="5000" selected>5000 (코반)</option>
+          <!-- <option value="6000">6000 (EMS)</option> -->
+        </select>
+      </div>
+      <div class="right">
+        <span class="pill">올림 단위</span>
+        <select id="rounding">
+          <option value="1" selected>1 kg </option>
+          <!-- <option value="0.1">0.1 kg</option> -->
+        </select>
+        <button id="addBox" class="btn">박스 추가</button>
+      </div>
+    </div>
 
-    <div id="boxInputs"></div>
+    <div class="row">
+      <div>
+        <label>박스 개수</label>
+        <input type="number" id="boxCount" min="1" value="1">
+      </div>
+      <div>
+        <label>메모(선택)</label>
+        <input id="note" placeholder="수취인/인보이스 참고 메모">
+      </div>
+    </div>
 
-    <div id="result"></div>
-    <div id="quote"></div>
-    <div id="rateTable" class="rate-table"></div>
+    <div id="boxes"></div>
+
+    <div class="kpi" id="kpi">
+      <div><div class="small">총 실제무게</div><b id="realSum">0.0 kg</b></div>
+      <div><div class="small">총 부피무게</div><b id="volSum">0.0 kg</b></div>
+      <div><div class="small">청구무게(올림)</div><b id="chgWeight">0 kg</b></div>
+    </div>
+
+    <div class="panel" id="customerOut"></div>
+    <div class="panel" id="internalOut"></div>
+
+    <div class="table">
+      <header>📊 요율 기준표 (<span id="rateTitle">개인 Premium</span>)</header>
+      <div class="rates" id="rateTable"></div>
+    </div>
   </div>
 
-  <script>
-    const rates = [
-      { weight: 0.5, price: 64400 }, { weight: 1, price: 77200 },
-      { weight: 1.5, price: 88100 }, { weight: 2, price: 99100 },
-      { weight: 2.5, price: 110000 }, { weight: 3, price: 120800 },
-      { weight: 3.5, price: 131800 }, { weight: 4, price: 142800 },
-      { weight: 4.5, price: 153700 }, { weight: 5, price: 164600 },
-      { weight: 5.5, price: 175000 }, { weight: 6, price: 185500 },
-      { weight: 6.5, price: 195800 }, { weight: 7, price: 206200 },
-      { weight: 7.5, price: 216600 }, { weight: 8, price: 227100 },
-      { weight: 8.5, price: 237500 }, { weight: 9, price: 247800 },
-      { weight: 9.5, price: 258200 }, { weight: 10, price: 268800 },
-      { weight: 11, price: 289400 }, { weight: 12, price: 309900 },
-      { weight: 13, price: 330400 }, { weight: 14, price: 351100 },
-      { weight: 15, price: 371600 }, { weight: 16, price: 392500 },
-      { weight: 17, price: 413300 }, { weight: 18, price: 434100 },
-      { weight: 19, price: 454900 }, { weight: 20, price: 475700 },
-      { weight: 21, price: 496300 }, { weight: 22, price: 516800 },
-      { weight: 23, price: 537400 }, { weight: 24, price: 558000 },
-      { weight: 25, price: 578600 }, { weight: 26, price: 598900 },
-      { weight: 27, price: 619200 }, { weight: 28, price: 639500 },
-      { weight: 29, price: 659900 }, { weight: 30, price: 680200 },
-      { weight: 31, price: 705900 }, { weight: 32, price: 725700 },
-      { weight: 33, price: 745600 }, { weight: 34, price: 765300 },
-      { weight: 35, price: 785100 }, { weight: 36, price: 805000 },
-      { weight: 37, price: 824600 }, { weight: 38, price: 844400 },
-      { weight: 39, price: 864300 }, { weight: 40, price: 884100 }
-    ];
+<script>
+/* ===== 요율표 (0.5 ~ 70kg) ===== */
+/* Premium(개인) */
+const premiumRates = [
+  [0.5,64400],[1,77200],[1.5,88100],[2,99100],[2.5,110000],[3,120800],
+  [3.5,131800],[4,142800],[4.5,153700],[5,164600],[5.5,175000],[6,185500],
+  [6.5,195800],[7,206200],[7.5,216600],[8,227100],[8.5,237500],[9,247800],
+  [9.5,258200],[10,268800],[10.5,279100],[11,289400],[11.5,299600],[12,309900],
+  [12.5,320200],[13,330400],[13.5,340800],[14,351100],[14.5,361400],[15,371600],
+  [15.5,382000],[16,392500],[16.5,402900],[17,413300],[17.5,423600],[18,434100],
+  [18.5,444500],[19,454900],[19.5,465300],[20,475700],
+  [21,496300],[22,516800],[23,537400],[24,558000],[25,578600],[26,598900],
+  [27,619200],[28,639500],[29,659900],[30,680200],
+  [31,705900],[32,725700],[33,745600],[34,765300],[35,785100],[36,805000],
+  [37,824600],[38,844400],[39,864300],[40,884100],
+  [41,903600],[42,923200],[43,942700],[44,962200],[45,981800],[46,1001300],
+  [47,1020900],[48,1040300],[49,1059900],[50,1079500],
+  [51,1097800],[52,1116000],[53,1134300],[54,1152500],[55,1170800],[56,1188900],
+  [57,1207200],[58,1225400],[59,1243700],[60,1262000],
+  [61,1280300],[62,1298500],[63,1316800],[64,1335000],[65,1353300],[66,1371500],
+  [67,1389800],[68,1408000],[69,1426300],[70,1444700]
+];
 
-    const boxInputsContainer = document.getElementById('boxInputs');
-    const resultDiv = document.getElementById('result');
-    const quoteDiv = document.getElementById('quote');
-    const boxCountInput = document.getElementById('boxCount');
+/* Private Company(기업) */
+const companyRates = [
+  [0.5,37400],[1,49000],[1.5,64500],[2,80100],[2.5,85900],[3,91600],
+  [3.5,97300],[4,102900],[4.5,108900],[5,114300],[5.5,120000],[6,125500],
+  [6.5,131600],[7,137200],[7.5,142700],[8,148300],[8.5,154400],[9,159800],
+  [9.5,165600],[10,171300],[10.5,177000],[11,182600],[11.5,188300],[12,194000],
+  [12.5,199700],[13,205200],[13.5,211200],[14,216900],[14.5,222400],[15,228000],
+  [15.5,234100],[16,239500],[16.5,245200],[17,251000],[17.5,256500],[18,262300],
+  [18.5,267900],[19,273700],[19.5,279400],[20,284900],
+  [21,296400],[22,307700],[23,319100],[24,330300],[25,342000],[26,353300],
+  [27,364500],[28,376100],[29,387400],[30,398800],
+  [31,603500],[32,620100],[33,636400],[34,653000],[35,669400],[36,685800],
+  [37,702300],[38,718700],[39,735300],[40,751700],
+  [41,768000],[42,784600],[43,801000],[44,817600],[45,833900],[46,850700],
+  [47,867300],[48,884100],[49,900800],[50,917500],
+  [51,933200],[52,948900],[53,964600],[54,980200],[55,995900],[56,1011600],
+  [57,1027300],[58,1042900],[59,1058600],[60,1074400],
+  [61,1090100],[62,1105700],[63,1121400],[64,1137100],[65,1152800],[66,1168400],
+  [67,1184000],[68,1199800],[69,1215400],[70,1231200]
+];
 
-    boxCountInput.addEventListener('input', generateBoxInputs);
+/* ---------- helpers ---------- */
+const fmt = n => n.toLocaleString();
 
-    function generateBoxInputs() {
-      const count = parseInt(boxCountInput.value);
-      boxInputsContainer.innerHTML = '';
+const getRates = () =>
+  (document.querySelector('input[name="cust"]:checked').value === 'company'
+    ? companyRates : premiumRates);
 
-      for (let i = 0; i < count; i++) {
-        const box = document.createElement('div');
-        box.className = 'box-group';
-        box.innerHTML = `
-          <h4>📦 박스 ${i + 1}</h4>
-          <label>실무게 (kg):</label>
-          <input type="number" class="weight" step="0.1" />
-          <label>가로 (cm):</label>
-          <input type="number" class="width" />
-          <label>세로 (cm):</label>
-          <input type="number" class="length" />
-          <label>높이 (cm):</label>
-          <input type="number" class="height" />
-        `;
-        boxInputsContainer.appendChild(box);
-      }
-
-      document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', calculateTotal);
-      });
-
-      calculateTotal();
-    }
-
-    function calculateTotal() {
-      const weights = document.querySelectorAll('.weight');
-      const widths = document.querySelectorAll('.width');
-      const lengths = document.querySelectorAll('.length');
-      const heights = document.querySelectorAll('.height');
-
-      let totalChargeableWeight = 0;
-      let boxCount = weights.length;
-      let customerQuote = `📬 고객 발송용 견적서\n\n`;
-      let internalReport = `📄 KORBAN EXPRESS 특송 요율 산출 근거서 (핸드캐리)\n\n`;
-
-      internalReport += `1. 기본 정보\n----------------------------------\n`;
-      internalReport += `고객명         : [고객 성함 또는 회사명]\n`;
-      internalReport += `담당자         : [담당 직원 이름]\n`;
-      internalReport += `출발지         : [예: 서울]\n`;
-      internalReport += `도착지         : [예: 방글라데시 다카]\n`;
-      internalReport += `수출일자       : [YYYY-MM-DD]\n`;
-      internalReport += `상품명/품목    : [예: 의류, 기계 부품 등]\n`;
-      internalReport += `박스 개수      : ${boxCount}\n\n`;
-      internalReport += `2. 박스별 산출 내역\n----------------------------------\n`;
-
-      for (let i = 0; i < boxCount; i++) {
-        const w = parseFloat(weights[i].value) || 0;
-        const width = parseFloat(widths[i].value) || 0;
-        const length = parseFloat(lengths[i].value) || 0;
-        const height = parseFloat(heights[i].value) || 0;
-
-        const volWeight = (width * length * height) / 5000;
-        const chargeable = Math.max(w, volWeight);
-        totalChargeableWeight += chargeable;
-
-        internalReport += `[박스 ${i + 1}]\n`;
-        internalReport += ` - 실제무게: ${w.toFixed(2)} kg\n`;
-        internalReport += ` - CBM 계산식: (${width} × ${length} × ${height}) ÷ 5000 = ${volWeight.toFixed(2)} kg\n`;
-        internalReport += ` - 청구무게: ${chargeable.toFixed(2)} kg\n\n`;
-      }
-
-      totalChargeableWeight = Math.ceil(totalChargeableWeight * 10) / 10;
-      const matchedRate = rates.find(rate => rate.weight >= totalChargeableWeight);
-
-      if (matchedRate) {
-        customerQuote += `총 박스 수: ${boxCount}개\n`;
-        customerQuote += `청구무게: ${totalChargeableWeight.toFixed(1)} kg\n`;
-        customerQuote += `예상 운임: ${matchedRate.price.toLocaleString()} 원 (VAT 별도)\n`;
-        customerQuote += `배송 방식: 핸드캐리 특송\n`;
-
-        internalReport += `3. 청구 기준 및 요금\n----------------------------------\n`;
-        internalReport += `- 총 청구무게: ${totalChargeableWeight.toFixed(1)} kg\n`;
-        internalReport += `- 요율 기준 구간: ${matchedRate.weight}kg \n`;
-        internalReport += `- 적용 운임 단가: ${matchedRate.price.toLocaleString()} 원 (VAT 별도)\n`;
-        internalReport += `- 할인/조정 여부: 없음\n\n`;
-
-        internalReport += `4. 비고\n----------------------------------\n`;
-        internalReport += `- 핸드캐리 특송 기준 요율 적용\n`;
-        internalReport += `- 고객 요청사항 없음\n`;
-        internalReport += `- 송장 및 출고 후 회신 예정\n\n`;
-
-        internalReport += `5. 결재\n----------------------------------\n`;
-        internalReport += `작성자: ____________________\n`;
-        internalReport += `검토자: ____________________\n`;
-        internalReport += `승인자: ____________________\n`;
-        internalReport += `일자:   [YYYY-MM-DD]\n`;
-      } else {
-        customerQuote += `❗ 요금표에 해당하는 무게가 없습니다.\n`;
-        internalReport += `⚠️ 요금표 범위를 초과했습니다.\n`;
-      }
-
-      resultDiv.textContent = customerQuote;
-      quoteDiv.textContent = internalReport;
-
-      
-    }
-
-    generateBoxInputs();
-
-    function renderRateTable() {
-  const rateDiv = document.getElementById('rateTable');
-  let tableText = `<h3>📊 요율 기준표 (담당자용)</h3>`;
-  tableText += `<pre>`;
-  rates.forEach(rate => {
-    tableText += ` - ${rate.weight.toFixed(1)} kg : ${rate.price.toLocaleString()} 원\n`;
-  });
-  tableText += `</pre>`;
-  rateDiv.innerHTML = tableText;
+function findPrice(weight){
+  const table = getRates();
+  for(const [w,p] of table){
+    if(weight <= w) return {bracket:w, price:p};
+  }
+  // over max → use last bracket
+  const [w,p] = table[table.length-1];
+  return {bracket:w, price:p};
 }
 
-renderRateTable();
-  </script>
+/* ---------- UI generation ---------- */
+const boxesEl = document.getElementById('boxes');
+const boxCountEl = document.getElementById('boxCount');
+const divisorEl = document.getElementById('divisor');
+const roundingEl = document.getElementById('rounding');
+const addBoxBtn = document.getElementById('addBox');
+
+const realSumEl = document.getElementById('realSum');
+const volSumEl  = document.getElementById('volSum');
+const chgWeightEl = document.getElementById('chgWeight');
+
+const customerOut = document.getElementById('customerOut');
+const internalOut  = document.getElementById('internalOut');
+const rateTableDiv = document.getElementById('rateTable');
+const rateTitle = document.getElementById('rateTitle');
+
+/* build one box row */
+function boxTemplate(i){
+  return `
+  <div class="box">
+    <div class="row-3">
+      <div>
+        <label>실제무게 (kg)</label>
+        <input type="number" class="w" step="0.01" placeholder="예: 22">
+      </div>
+      <div>
+        <label>가로 (cm)</label>
+        <input type="number" class="x" step="0.1" placeholder="예: 66">
+      </div>
+      <div>
+        <label>세로 (cm)</label>
+        <input type="number" class="y" step="0.1" placeholder="예: 40">
+      </div>
+    </div>
+    <div class="row-3" style="margin-top:8px">
+      <div>
+        <label>높이 (cm)</label>
+        <input type="number" class="z" step="0.1" placeholder="예: 21">
+      </div>
+      <div>
+        <label class="small">참고: 부피무게 = (가로×세로×높이) ÷ 분모</label>
+        <input disabled value="">
+      </div>
+      <div>
+        <label class="small">청구무게(해당 박스)</label>
+        <input disabled value="">
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildBoxes(n){
+  boxesEl.innerHTML = '';
+  for(let i=0;i<n;i++) boxesEl.insertAdjacentHTML('beforeend', boxTemplate(i));
+  document.querySelectorAll('#boxes input').forEach(i=>i.addEventListener('input',calc));
+}
+
+function syncRateTable(){
+  const table = getRates();
+  rateTitle.textContent = (document.querySelector('input[name="cust"]:checked').value==='company')
+    ? '기업 Private Company' : '개인 Premium';
+  let txt = '';
+  table.forEach(([w,p]) => txt += `${w.toFixed(1).padStart(5,' ')} kg  :  ${fmt(p)} 원\n`);
+  rateTableDiv.textContent = txt;
+}
+
+/* ---------- calculation ---------- */
+function calc(){
+  const divisor = +divisorEl.value;
+  const roundUnit = +roundingEl.value;
+
+  const boxes = [...document.querySelectorAll('#boxes .box')];
+  let realSum=0, volSum=0;
+  let linesCustomer = '📬 고객 발송용: 견적서 컨펌 요청 \n\n 안녕하세요.\n 보내주신 물품은 저희 사무실에 안전하게 도착하였습니다. \n 컨펌주시면 아래와 같이 공식 견적서를 송부 할 예정이오니 검토 부탁드립니다. \n\n';
+  let linesInternal = '📄 KORBAN EXPRESS 특송 요율 산출 근거서 \n\n1. 박스별 산출 내역\n----------------------------------\n';
+
+  boxes.forEach((box, idx)=>{
+    const w = +box.querySelector('.w').value || 0;
+    const x = +box.querySelector('.x').value || 0;
+    const y = +box.querySelector('.y').value || 0;
+    const z = +box.querySelector('.z').value || 0;
+
+    const vol = (x*y*z)/divisor;
+    const chg = Math.max(w, vol);
+
+    realSum += w;
+    volSum  += vol;
+
+    // write per-box disabled outputs
+    box.querySelectorAll('input[disabled]')[0].value = `${vol.toFixed(2)} kg`;
+    box.querySelectorAll('input[disabled]')[1].value = `${chg.toFixed(2)} kg`;
+
+    linesInternal += `[박스 ${idx+1}]\n - 실제무게: ${w.toFixed(2)} kg\n - CBM 계산식: (${x} × ${y} × ${z}) ÷ ${divisor} = ${vol.toFixed(2)} kg\n - 청구무게: ${chg.toFixed(2)} kg\n\n`;
+  });
+
+  // rounding
+  const charged = Math.ceil((Math.max(realSum, volSum))/roundUnit)*roundUnit;
+
+  // rate lookup
+  const {bracket, price} = findPrice(charged);
+
+  // KPIs
+  realSumEl.textContent = `${realSum.toFixed(1)} kg`;
+  volSumEl.textContent  = `${volSum.toFixed(1)} kg`;
+  chgWeightEl.textContent = `${(charged%1===0?charged.toFixed(0):charged.toFixed(1))} kg (요율 ${bracket}kg)`;
+
+  // Customer text
+  linesCustomer += `총 박스 수: ${boxes.length}개\n`;
+  linesCustomer += `총 실제무게: ${realSum.toFixed(1)} kg\n총 부피무게: ${volSum.toFixed(1)} kg\n`;
+  linesCustomer += `청구무게: ${charged.toFixed(roundUnit===1?0:1)} kg\n`;
+  linesCustomer += `청구 운임: ${fmt(price)} 원\n`;
+  linesCustomer += `*현지 통관 사정에 따라 추가요금이 발생할 수 있습니다. \n\n 감사합니다.`;
+
+  // Internal text
+  linesInternal += `2. 청구 기준 및 요금\n----------------------------------\n`;
+  linesInternal += `- 총 실제무게: ${realSum.toFixed(1)} kg\n- 총 부피무게: ${volSum.toFixed(1)} kg\n`;
+  linesInternal += `- 총 청구무게(올림): ${charged.toFixed(roundUnit===1?0:1)} kg\n`;
+  linesInternal += `- 요율 기준 구간: ${bracket} kg\n- 적용 운임 단가: ${fmt(price)} 원\n- 고객유형: ${(document.querySelector('input[name="cust"]:checked').value==='company'?'기업(Private Company)':'개인(Premium)')}\n`;
+
+  customerOut.textContent = linesCustomer;
+  internalOut.textContent  = linesInternal;
+}
+
+/* ---------- events ---------- */
+function init(){
+  buildBoxes(+boxCountEl.value);
+  syncRateTable();
+  calc();
+}
+boxCountEl.addEventListener('input', e=>{
+  const n = Math.max(1, +e.target.value||1);
+  buildBoxes(n); calc();
+});
+document.querySelectorAll('input[name="cust"]').forEach(r=>r.addEventListener('change',()=>{syncRateTable(); calc();}));
+divisorEl.addEventListener('change', calc);
+roundingEl.addEventListener('change', calc);
+addBoxBtn.addEventListener('click', ()=>{ boxCountEl.value = (+boxCountEl.value||1)+1; buildBoxes(+boxCountEl.value); calc(); });
+
+init();
+</script>
 </body>
 </html>
