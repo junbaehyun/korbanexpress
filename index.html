@@ -187,18 +187,14 @@
       <!-- 일정 확인 -->
       <section class="tabpane" id="pane-schedule" role="tabpanel" aria-labelledby="tab-schedule">
         <div class="panel">
-          <h3>이번 일정 </h3>
-          <div class="timeline">
-            <div class="t"><b>~ 11/17(월)</b> : 코반 사무실 입고 마감</div>
-            <div class="t"><b>11/17(월) 밤</b> : 인천 → 다카 출고</div>
-            <div class="t"><b>11/18~19</b> : 현지 통관/배송</div>
-            <div class="t"><b>11/20(목)</b> : 수령 완료 & 인증 사진 전달</div>
-          </div>
+          <h3>출고 일정표</h3>
+          <div id="scheduleWrap"></div>
           <div class="small" style="margin-top:8px">
-            ※ 항공/통관 사정에 따라 일정은 다소 변동될 수 있습니다. 문의: 02-2658-4005
+            ※ 항공/통관 사정에 따라 일정은 변동될 수 있습니다. 문의: 02-2658-4005
           </div>
         </div>
       </section>
+      
     </div>
   </div>
 
@@ -219,6 +215,63 @@ function activateTab(id){
 
 tabButtons.forEach(btn=>{
   btn.addEventListener('click', ()=>activateTab(btn.getAttribute('aria-controls')));
+});
+
+/* ===== Schedule (NEW) ===== */
+// 출고 기준일들만 넣으면 표가 자동 생성됩니다.
+const scheduleBases = [
+  "2025-11-17", // Mon
+  "2025-12-01", // Mon
+  "2025-12-08", // Mon
+  "2025-12-15", // Mon
+  "2025-12-22"  // Mon
+];
+
+// 날짜 유틸
+function addDays(iso, days){
+  const d = new Date(iso);
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = (d.getMonth()+1).toString().padStart(2,'0');
+  const dd = d.getDate().toString().padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+function fmtK(iso){ // YYYY-MM-DD → M/D(요일)
+  const w = ['일','월','화','수','목','금','토'];
+  const d = new Date(iso);
+  const m = d.getMonth()+1, day = d.getDate(), wd = w[d.getDay()];
+  return `${m}/${day}(${wd})`;
+}
+
+// 일정 블록: 기준일(D0) 기준 예시 로직
+// D0(월) : 입고 마감 & 출고
+// D0+1~2 : 현지 통관/배송
+// D0+3   : 수령 인증
+function renderSchedule(dates){
+  const wrap = document.getElementById('scheduleWrap');
+  if(!wrap) return;
+  let html = '';
+  dates.forEach((d0,i)=>{
+    const d1 = addDays(d0, 1);
+    const d2 = addDays(d0, 2);
+    const d3 = addDays(d0, 3);
+    html += `
+      <div class="notice-item" style="margin-top:10px">
+        <b>출고 회차 ${i+1} : ${fmtK(d0)}</b>
+        <div class="timeline">
+          <div class="t"><b>${fmtK(d0)}</b> : 코반 사무실 입고 마감 & 인천→다카 출고</div>
+          <div class="t"><b>${fmtK(d1)} ~ ${fmtK(d2)}</b> : 방글라데시 현지 통관/배송</div>
+          <div class="t"><b>${fmtK(d3)}</b> : 수령 완료 & 인증 사진 전달</div>
+        </div>
+      </div>
+    `;
+  });
+  wrap.innerHTML = html;
+}
+
+// 초기 로드에 일정도 같이 그리기
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderSchedule(scheduleBases);
 });
 
 /* ===== 요율표 (0.5 ~ 70kg) ===== */
