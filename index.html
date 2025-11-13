@@ -252,7 +252,7 @@
           </div>
         
           <!-- 오른쪽: 박스 추가 버튼 & (숨김) 내부 옵션 -->
-          <div class="right">
+          <!-- <div class="right">
             <span class="pill hidden">부피 분모</span>
             <select id="divisor" class="hidden">
               <option value="5000" selected>5000 (코반)</option>
@@ -264,7 +264,7 @@
             </select>
         
             <button id="addBox" class="btn">박스 추가</button>
-          </div>
+          </div> -->
         </div>
         
 
@@ -466,7 +466,7 @@ const GOODS_TYPES = {
     help: '포장 식품(건식, 스낵, 커피, 차 등), 비의약품 건강보조식품, 비의약품 퍼스널케어 – 기본 B 요율 사용.'
   },
   machinery: {
-    band: 'B',
+    band: 'A',
     ui: 'Machinery Parts / Industrial Components (기계부품 / 산업용 부품)',
     help: '금속 부품, 산업용 장비 소형 파트, 자동차/기계 스페어 파트 – 국제 기준 General Cargo(B).'
   }
@@ -478,9 +478,9 @@ function currentBand(){
 }
 
 function bandLabel(band){
-  if(band === 'A') return 'A – 공산품 (General Consumer Goods)';
-  if(band === 'B') return 'B – 일반잡화·식품·의류·기계부품 (General Cargo)';
-  return 'C – 일반 서류 (Documents · 2kg까지)';
+  if(band === 'A') return 'A요율 – 공산품 (General Consumer Goods)';
+  if(band === 'B') return 'B요율 – 일반잡화·식품·의류·기계부품 (General Cargo)';
+  return 'C요율 – 일반 서류 (Documents · 2kg까지)';
 }
 
 
