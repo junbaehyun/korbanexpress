@@ -29,7 +29,7 @@
     }
     h2{margin:0 0 18px;font-weight:800;color:var(--brand);text-align:center}
 
-    /* ---- TABS (NEW) ---- */
+    /* ---- TABS ---- */
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px;border-bottom:1px solid var(--line);padding-bottom:8px}
     .tab{
       appearance:none;background:#f7f8ff;border:1px solid var(--line);color:#2a2f45;
@@ -57,7 +57,7 @@
       align-items:center;justify-content:space-between;border:1px dashed var(--line);
       padding:12px;border-radius:12px;background:#fafbff;
     }
-    .controls > div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .controls > div{display:flex;flex-direction:column;gap:6px;flex-wrap:wrap;min-width:220px}
     .pill{
       background:#f1f3ff;border:1px solid #dfe3ff;padding:6px 10px;border-radius:999px;font-size:13px
     }
@@ -72,7 +72,7 @@
     }
     .table header{padding:10px 14px;font-weight:700;background:#f7f7ff;border-bottom:1px solid var(--line)}
     .rates{max-height:300px;overflow:auto;padding:10px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6}
-    .right{display:flex;gap:10px;align-items:center}
+    .right{display:flex;gap:10px;align-items:center;justify-content:flex-end}
     .kpi{
       background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;display:grid;gap:8px;grid-template-columns:repeat(3,1fr)
     }
@@ -88,13 +88,82 @@
     .timeline{border-left:3px solid #e1e5ff;padding-left:14px;margin-top:8px}
     .timeline .t{margin:10px 0}
     .timeline .t b{color:#0e2f74}
+
+    /* controls 물품 유형 섹션 style update */
+    .goods-block{
+  flex:1;
+  min-width:260px;
+}
+
+.goods-label-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.badge-band{
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#fff7e0;
+  color:#b36b00;
+  border:1px solid #ffe0a3;
+}
+
+.goods-group{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:6px;
+  margin-bottom:6px;
+}
+
+.goods-chip{
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  padding:8px 10px;
+  text-align:left;
+  font-size:12px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .05s ease;
+}
+
+.goods-chip strong{
+  font-size:13px;
+  color:#222;
+}
+
+.goods-chip span{
+  font-size:11px;
+  color:#777;
+}
+
+.goods-chip:hover{
+  background:#f6f7ff;
+  transform:translateY(-1px);
+}
+
+.goods-chip.active{
+  border-color:var(--brand);
+  box-shadow:0 0 0 1px rgba(16,61,143,.18);
+  background:#f3f6ff;
+}
+
+.hidden{
+  display:none !important;
+}
+
   </style>
 </head>
 <body>
   <div class="container">
     <h2>📦 KORBAN EXPRESS 특송 안내 & 요금 계산</h2>
 
-    <!-- Tabs (NEW) -->
+    <!-- Tabs -->
     <div class="tabs" role="tablist" aria-label="KORBAN EXPRESS Tabs">
       <button class="tab" role="tab" aria-selected="false" aria-controls="pane-notice" id="tab-notice">공지사항</button>
       <button class="tab" role="tab" aria-selected="true"  aria-controls="pane-howto"  id="tab-howto">특송 접수 방법</button>
@@ -106,8 +175,9 @@
       <section class="tabpane" id="pane-notice" role="tabpanel" aria-labelledby="tab-notice">
         <div class="notice-list">
           <div class="notice-item">
-            <b>11/17 방글라데시 샘플 출고</b><br/>
-            11월 17일(월)까지 코반 사무실 입고분에 한해 동일 편 출고됩니다. (마감 후 접수분은 차주 편성)
+            <b>정기 출고 및 배송 기간 안내</b><br/>
+            코반 특송은 인천→다카 Door-to-Door 서비스로, 출고 후 평균 <b>3~14일 이내</b> 수령됩니다.<br/>
+            (일반 서류는 <b>3~5일</b> 소요 / 항공·통관 사정에 따라 변동 가능)
           </div>
           <div class="notice-item">
             <b>택배 발송 주소</b><br/>
@@ -115,45 +185,88 @@
             받는이: 코반 특송담당자 / 02-2658-4005
           </div>
           <div class="notice-item">
-            <b>현지 수령 인증</b><br/>
-            방글라데시 현지 수령 후 <u>11/20 인증 사진</u>을 제공합니다.
+            <b>요금 및 통관 안내</b><br/>
+            현재 요금은 <u>물류비 + 기본 통관비 포함</u> 가격입니다.<br/>
+            다만, <b>현지 통관 시 물품에 따라 추가 세금·부가세</b>가 발생할 수 있습니다.
           </div>
         </div>
       </section>
 
-      <!-- 특송 접수 방법 (기존 계산기 포함) -->
+      <!-- 특송 접수 방법 (계산기 포함) -->
       <section class="tabpane active" id="pane-howto" role="tabpanel" aria-labelledby="tab-howto">
         <div class="panel">
           <h3>접수 순서</h3>
           1) 견적 확인: 물품의 대략적 무게/사이즈 확인 → 아래 계산기 활용 또는 상담<br/>
-          2) 특송 접수: 담당자 직통 02-2658-4005<br/>
-          3) 발송: 11/17까지 코반 사무실로 택배 발송<br/>
-          4) 확인: 11/20 방글라데시 수령 인증 사진 전달
+          2) 특송 접수: 담당자 직통 02-2658-4005 / 카카오톡 상담 후 운임 확정<br/>
+          3) 발송: 안내받은 출고 일정 전까지 코반 사무실로 택배 발송 (상단 주소, 일정 탭 참고)<br/>
+          4) 확인: 출고 후 평균 3~14일 내 방글라데시 수령, 요청 시 수령 인증 사진 전달
         </div>
 
-        <!-- ===== 기존 UI 시작 ===== -->
+        <!-- ===== 계산기 UI ===== -->
         <div class="controls">
-          <div>
-            <span class="pill">고객유형</span>
-            <label><input type="radio" name="cust" value="premium" checked> 개인(Premium)</label>
-            <label><input type="radio" name="cust" value="company"> 기업(Private Company)</label>
+          <!-- 물품 유형 선택 블록 -->
+          <div class="goods-block">
+            <div class="goods-label-row">
+              <span class="pill">물품 유형</span>
+              <span class="badge-band" id="bandBadge">A – 공산품 / B – 일반화물 / C – 서류</span>
+            </div>
+        
+            <div class="goods-group" id="goodsGroup">
+              <button type="button" class="goods-chip active" data-value="documents">
+                <strong>문서류 (Documents)</strong>
+                <span>계약서, 증명서, 인보이스, 입학·비자서류 등 얇은 일반 서류</span>
+              </button>
+              <button type="button" class="goods-chip" data-value="consumer">
+                <strong>공산품 (Consumer Goods)</strong>
+                <span>전자제품, 공구, 화장품(비액상), 고가 소비재 등</span>
+              </button>
+              <button type="button" class="goods-chip" data-value="apparel">
+                <strong>의류·섬유 (Apparel & Textiles)</strong>
+                <span>의류, 원단, 봉제 부자재(실·지퍼·단추 등)</span>
+              </button>
+              <button type="button" class="goods-chip" data-value="books">
+                <strong>도서·인쇄물 (Books & Printed)</strong>
+                <span>일반 도서, 잡지, 카탈로그, 교재</span>
+              </button>
+              <button type="button" class="goods-chip" data-value="food">
+                <strong>식품·개인용품 (Food & Personal)</strong>
+                <span>포장 식품, 건강보조식품(비의약), 퍼스널케어</span>
+              </button>
+              <button type="button" class="goods-chip" data-value="machinery">
+                <strong>기계·산업부품 (Machinery Parts)</strong>
+                <span>금속 파트, 산업용 장비 부품, 스페어 파트</span>
+              </button>
+            </div>
+        
+            <div id="goodsHelp" class="small"></div>
+        
+            <!-- 계산 로직에서 쓰는 hidden select (기존 JS 유지용) -->
+            <select id="goodsType" class="hidden">
+              <option value="documents" selected>Documents</option>
+              <option value="consumer">Consumer Goods</option>
+              <option value="apparel">Apparel & Textiles</option>
+              <option value="books">Books & Printed</option>
+              <option value="food">Food & Personal Care</option>
+              <option value="machinery">Machinery Parts / Industrial</option>
+            </select>
           </div>
-          <div>
-            <span class="pill" hidden>부피 분모</span>
-            <select id="divisor" hidden>
+        
+          <!-- 오른쪽: 박스 추가 버튼 & (숨김) 내부 옵션 -->
+          <!-- <div class="right">
+            <span class="pill hidden">부피 분모</span>
+            <select id="divisor" class="hidden">
               <option value="5000" selected>5000 (코반)</option>
-              <!-- <option value="6000">6000 (EMS)</option> -->
             </select>
-          </div>
-          <div class="right">
-            <span class="pill" hidden>올림 단위</span>
-            <select id="rounding" hidden>
-              <option value="0.5" selected>0.5 kg </option>
-              <!-- <option value="0.1">0.1 kg</option> -->
+        
+            <span class="pill hidden">올림 단위</span>
+            <select id="rounding" class="hidden">
+              <option value="0.5" selected>0.5 kg</option>
             </select>
+        
             <button id="addBox" class="btn">박스 추가</button>
-          </div>
+          </div> -->
         </div>
+        
 
         <div class="row">
           <div>
@@ -178,10 +291,10 @@
         <div class="panel" id="internalOut"></div>
 
         <div class="table">
-          <header>📊 요율 기준표 (<span id="rateTitle">개인 Premium</span>)</header>
+          <header>📊 요율 기준표 (<span id="rateTitle"></span>) · 2025년 11월 기준</header>
           <div class="rates" id="rateTable"></div>
         </div>
-        <!-- ===== 기존 UI 끝 ===== -->
+        <!-- ===== 계산기 UI 끝 ===== -->
       </section>
 
       <!-- 일정 확인 -->
@@ -194,12 +307,11 @@
           </div>
         </div>
       </section>
-      
     </div>
   </div>
 
 <script>
-/* ===== Tabs (NEW) ===== */
+/* ===== Tabs ===== */
 const tabButtons = document.querySelectorAll('.tab');
 const tabPanes = document.querySelectorAll('.tabpane');
 
@@ -217,7 +329,7 @@ tabButtons.forEach(btn=>{
   btn.addEventListener('click', ()=>activateTab(btn.getAttribute('aria-controls')));
 });
 
-/* ===== Schedule (NEW) ===== */
+/* ===== Schedule ===== */
 // 출고 기준일들만 넣으면 표가 자동 생성됩니다.
 const scheduleBases = [
   "2025-11-17", // Mon
@@ -261,7 +373,7 @@ function renderSchedule(dates){
         <div class="timeline">
           <div class="t"><b>${fmtK(d0)}</b> : 코반 사무실 입고 마감 & 인천→다카 출고</div>
           <div class="t"><b>${fmtK(d1)} ~ ${fmtK(d2)}</b> : 방글라데시 현지 통관/배송</div>
-          <div class="t"><b>${fmtK(d3)}</b> : 수령 완료 & 인증 사진 전달</div>
+          <div class="t"><b>${fmtK(d3)}</b> : 수령 완료 & 인증 사진 전달 (요청 시)</div>
         </div>
       </div>
     `;
@@ -269,68 +381,168 @@ function renderSchedule(dates){
   wrap.innerHTML = html;
 }
 
-// 초기 로드에 일정도 같이 그리기
-document.addEventListener('DOMContentLoaded', ()=>{
-  renderSchedule(scheduleBases);
+/* ===== 요율표 – A/B/C ===== */
+/* A – 공산품 (Consumer Goods) */
+const ratesA = [
+  [0.5, 58800],[1, 73500],[1.5, 88200],[2, 102900],[2.5, 110250],[3, 123480],
+  [3.5, 138915],[4, 152880],[4.5, 165375],[5, 176400],[5.5, 185955],[6, 194040],
+  [6.5, 200655],[7, 205800],[7.5, 209475],[8, 211680],[8.5, 224910],[9, 238140],
+  [9.5, 251370],[10, 264600],[10.5, 277830],[11, 291060],[11.5, 304290],[12, 317520],
+  [12.5, 330750],[13, 343980],[13.5, 357210],[14, 370440],[14.5, 383670],[15, 396900],
+  [15.5, 410130],[16, 423360],[16.5, 436590],[17, 449820],[17.5, 463050],[18, 476280],
+  [18.5, 489510],[19, 502740],[19.5, 515970],[20, 529200],
+  [21, 555660],[22, 582120],[23, 608580],[24, 635040],[25, 661500],[26, 687960],
+  [27, 714420],[28, 740880],[29, 767340],[30, 793800],
+  [31, 820260],[32, 846720],[33, 873180],[34, 899640],[35, 926100],[36, 952560],
+  [37, 979020],[38, 1005480],[39, 1031940],[40, 1058400],
+  [41, 1084860],[42, 1111320],[43, 1137780],[44, 1164240],[45, 1190700],[46, 1217160],
+  [47, 1243620],[48, 1270080],[49, 1296540],[50, 1323000],
+  [51, 1349460],[52, 1375920],[53, 1402380],[54, 1428840],[55, 1455300],[56, 1481760],
+  [57, 1508220],[58, 1534680],[59, 1561140],[60, 1587600],
+  [61, 1614060],[62, 1640520],[63, 1666980],[64, 1693440],[65, 1719900],[66, 1746360],
+  [67, 1772820],[68, 1799280],[69, 1825740],[70, 1852200]
+];
+
+/* B – 일반잡화/식품/의류/기계부품 (General Cargo) */
+const ratesB = [
+  [0.5, 58800],[1, 73500],[1.5, 88200],[2, 102900],[2.5, 110250],[3, 123480],
+  [3.5, 138915],[4, 152880],[4.5, 165375],[5, 176400],[5.5, 185955],[6, 194040],
+  [6.5, 200655],[7, 205800],[7.5, 209475],[8, 211680],[8.5, 212415],[9, 224910],
+  [9.5, 223440],[10, 227850],[10.5, 231525],[11, 242550],[11.5, 253575],[12, 264600],
+  [12.5, 275625],[13, 286650],[13.5, 297675],[14, 308700],[14.5, 319725],[15, 330750],
+  [15.5, 341775],[16, 352800],[16.5, 363825],[17, 374850],[17.5, 385875],[18, 396900],
+  [18.5, 407925],[19, 418950],[19.5, 429975],[20, 441000],
+  [21, 463050],[22, 485100],[23, 507150],[24, 529200],[25, 551250],[26, 573300],
+  [27, 595350],[28, 617400],[29, 639450],[30, 661500],
+  [31, 683550],[32, 705600],[33, 727650],[34, 749700],[35, 771750],[36, 793800],
+  [37, 815850],[38, 837900],[39, 859950],[40, 882000],
+  [41, 904050],[42, 926100],[43, 948150],[44, 970200],[45, 992250],[46, 1014300],
+  [47, 1036350],[48, 1058400],[49, 1080450],[50, 1102500],
+  [51, 1124550],[52, 1146600],[53, 1168650],[54, 1190700],[55, 1212750],[56, 1234800],
+  [57, 1256850],[58, 1278900],[59, 1300950],[60, 1323000],
+  [61, 1345050],[62, 1367100],[63, 1389150],[64, 1411200],[65, 1433250],[66, 1455300],
+  [67, 1477350],[68, 1499400],[69, 1521450],[70, 1543500]
+];
+
+/* C – Documents (일반 서류, 최대 2kg) */
+const ratesC = [
+  [0.5, 45000],
+  [1.0, 68000],
+  [1.5, 80000],
+  [2.0, 100000]
+];
+
+/* ===== Goods type → Band (A/B/C) mapping ===== */
+const goodsTypeEl = document.getElementById('goodsType');
+const goodsHelpEl = document.getElementById('goodsHelp');
+const goodsGroupEl = document.getElementById('goodsGroup');
+const bandBadgeEl = document.getElementById('bandBadge');
+
+
+const GOODS_TYPES = {
+  documents: {
+    band: 'C',
+    ui: 'Documents (문서류 / 일반 서류)',
+    help: '계약서, 증명서, 인보이스, 입학·비자서류 등 얇은 문서만 해당 (책자·카탈로그는 “도서·출판물”로 B 요율).'
+  },
+  consumer: {
+    band: 'A',
+    ui: 'General Consumer Goods (일반 소비재 / 공산품)',
+    help: '전자제품(소형), 생활 공구류, 화장품(비액상), 비의약 건강기능식품, 잡화류 등 고가 공산품.'
+  },
+  apparel: {
+    band: 'B',
+    ui: 'Apparel & Textiles (의류·섬유류)',
+    help: '의류(티셔츠, 바지, 패딩 등), 직물·원단, 봉제 부자재(실, 지퍼, 단추 등) – 일반 화물(B) 요율.'
+  },
+  books: {
+    band: 'B',
+    ui: 'Books & Printed Materials (도서·출판물)',
+    help: '일반 도서, 잡지, 카탈로그, 학습 교재 등 인쇄물 – 특송업계 기준상 일반 화물(B)로 분류.'
+  },
+  food: {
+    band: 'B',
+    ui: 'Food & Personal Care Products (식품·개인용품)',
+    help: '포장 식품(건식, 스낵, 커피, 차 등), 비의약품 건강보조식품, 비의약품 퍼스널케어 – 기본 B 요율 사용.'
+  },
+  machinery: {
+    band: 'A',
+    ui: 'Machinery Parts / Industrial Components (기계부품 / 산업용 부품)',
+    help: '금속 부품, 산업용 장비 소형 파트, 자동차/기계 스페어 파트 – 국제 기준 General Cargo(B).'
+  }
+};
+
+function currentBand(){
+  const g = GOODS_TYPES[goodsTypeEl.value];
+  return g ? g.band : 'A';
+}
+
+function bandLabel(band){
+  if(band === 'A') return 'A요율 – 공산품 (General Consumer Goods)';
+  if(band === 'B') return 'B요율 – 일반잡화·식품·의류·기계부품 (General Cargo)';
+  return 'C요율 – 일반 서류 (Documents · 2kg까지)';
+}
+
+
+
+
+function getRatesByBand(band){
+  if(band === 'A') return ratesA;
+  if(band === 'B') return ratesB;
+  return ratesC;
+}
+
+/* add */
+function updateBandBadge(){
+  const band = currentBand();
+  bandBadgeEl.textContent = bandLabel(band);  // 예: "A – 공산품 (General Consumer Goods)"
+}
+goodsGroupEl.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.goods-chip');
+  if(!btn) return;
+
+  const val = btn.dataset.value;
+
+  // 버튼 active 토글
+  document.querySelectorAll('.goods-chip').forEach(b=>{
+    b.classList.toggle('active', b === btn);
+  });
+
+  // hidden select와 동기화 → 기존 로직들이 계속 정상 동작
+  goodsTypeEl.value = val;
+
+  // UI 및 계산 갱신
+  syncGoodsHelp();
+  syncRateTable();
+  updateBandBadge();
+  calc();
 });
 
-/* ===== 요율표 (0.5 ~ 70kg) ===== */
-/* Premium(개인) */
-const premiumRates = [
-  [0.5,64400],[1,77200],[1.5,88100],[2,99100],[2.5,110000],[3,120800],
-  [3.5,131800],[4,142800],[4.5,153700],[5,164600],[5.5,175000],[6,185500],
-  [6.5,195800],[7,206200],[7.5,216600],[8,227100],[8.5,237500],[9,247800],
-  [9.5,258200],[10,268800],[10.5,279100],[11,289400],[11.5,299600],[12,309900],
-  [12.5,320200],[13,330400],[13.5,340800],[14,351100],[14.5,361400],[15,371600],
-  [15.5,382000],[16,392500],[16.5,402900],[17,413300],[17.5,423600],[18,434100],
-  [18.5,444500],[19,454900],[19.5,465300],[20,475700],
-  [21,496300],[22,516800],[23,537400],[24,558000],[25,578600],[26,598900],
-  [27,619200],[28,639500],[29,659900],[30,680200],
-  [31,705900],[32,725700],[33,745600],[34,765300],[35,785100],[36,805000],
-  [37,824600],[38,844400],[39,864300],[40,884100],
-  [41,903600],[42,923200],[43,942700],[44,962200],[45,981800],[46,1001300],
-  [47,1020900],[48,1040300],[49,1059900],[50,1079500],
-  [51,1097800],[52,1116000],[53,1134300],[54,1152500],[55,1170800],[56,1188900],
-  [57,1207200],[58,1225400],[59,1243700],[60,1262000],
-  [61,1280300],[62,1298500],[63,1316800],[64,1335000],[65,1353300],[66,1371500],
-  [67,1389800],[68,1408000],[69,1426300],[70,1444700]
-];
-
-/* Private Company(기업) */
-const companyRates = [
-  [0.5,37400],[1,49000],[1.5,64500],[2,80100],[2.5,85900],[3,91600],
-  [3.5,97300],[4,102900],[4.5,108900],[5,114300],[5.5,120000],[6,125500],
-  [6.5,131600],[7,137200],[7.5,142700],[8,148300],[8.5,154400],[9,159800],
-  [9.5,165600],[10,171300],[10.5,177000],[11,182600],[11.5,188300],[12,194000],
-  [12.5,199700],[13,205200],[13.5,211200],[14,216900],[14.5,222400],[15,228000],
-  [15.5,234100],[16,239500],[16.5,245200],[17,251000],[17.5,256500],[18,262300],
-  [18.5,267900],[19,273700],[19.5,279400],[20,284900],
-  [21,296400],[22,307700],[23,319100],[24,330300],[25,342000],[26,353300],
-  [27,364500],[28,376100],[29,387400],[30,398800],
-  [31,603500],[32,620100],[33,636400],[34,653000],[35,669400],[36,685800],
-  [37,702300],[38,718700],[39,735300],[40,751700],
-  [41,768000],[42,784600],[43,801000],[44,817600],[45,833900],[46,850700],
-  [47,867300],[48,884100],[49,900800],[50,917500],
-  [51,933200],[52,948900],[53,964600],[54,980200],[55,995900],[56,1011600],
-  [57,1027300],[58,1042900],[59,1058600],[60,1074400],
-  [61,1090100],[62,1105700],[63,1121400],[64,1137100],[65,1152800],[66,1168400],
-  [67,1184000],[68,1199800],[69,1215400],[70,1231200]
-];
 
 /* ---------- helpers ---------- */
 const fmt = n => n.toLocaleString();
 
-const getRates = () =>
-  (document.querySelector('input[name="cust"]:checked').value === 'company'
-    ? companyRates : premiumRates);
-
+/**
+ * 무게에 따른 요율 찾기.
+ * C(문서류) 선택 상태에서 2kg 초과 시 자동으로 B 요율로 전환.
+ */
 function findPrice(weight){
-  const table = getRates();
+  let band = currentBand();
+  let table = getRatesByBand(band);
+
+  let appliedBand = band;
+
+  // 문서류(C)는 2kg까지만 – 초과 시 일반화물(B)로 자동 전환
+  if(band === 'C' && weight > 2){
+    appliedBand = 'B';
+    table = ratesB;
+  }
+
   for(const [w,p] of table){
-    if(weight <= w) return {bracket:w, price:p};
+    if(weight <= w) return {bracket:w, price:p, appliedBand};
   }
   const [w,p] = table[table.length-1];
-  return {bracket:w, price:p};
+  return {bracket:w, price:p, appliedBand};
 }
 
 /* ---------- UI generation ---------- */
@@ -391,12 +603,17 @@ function buildBoxes(n){
 }
 
 function syncRateTable(){
-  const table = getRates();
-  rateTitle.textContent = (document.querySelector('input[name="cust"]:checked').value==='company')
-    ? '기업 Private Company' : '개인 Premium';
+  const band = currentBand();
+  rateTitle.textContent = bandLabel(band);
+  const table = getRatesByBand(band);
   let txt = '';
   table.forEach(([w,p]) => txt += `${w.toFixed(1).padStart(5,' ')} kg  :  ${fmt(p)} 원\n`);
   rateTableDiv.textContent = txt;
+}
+
+function syncGoodsHelp(){
+  const g = GOODS_TYPES[goodsTypeEl.value];
+  goodsHelpEl.textContent = g ? g.help : '';
 }
 
 /* ---------- calculation ---------- */
@@ -406,8 +623,16 @@ function calc(){
 
   const boxes = [...document.querySelectorAll('#boxes .box')];
   let realSum=0, volSum=0;
-  let linesCustomer = '📬 견적서 컨펌: 견적서 송부->결제->배송 \n\n 안녕하세요.\n 보내주실 물품이 저희 사무실에 안전하게 도착 후, \n 컨펌주시면 아래와 같이 공식 견적서를 송부 할 예정이오니 검토 부탁드립니다. \n\n';
-  let linesInternal = '📄 KORBAN EXPRESS 특송 요율 산출 근거서 \n\n1. 박스별 산출 내역\n----------------------------------\n';
+  const goodsConfig = GOODS_TYPES[goodsTypeEl.value] || GOODS_TYPES.consumer;
+
+  let linesCustomer =
+    '📬 견적서 컨펌: 견적서 송부 → 결제 → 배송 \n\n' +
+    '안녕하세요.\n보내주실 물품이 저희 사무실에 안전하게 도착 후,\n' +
+    '컨펌 주시면 아래와 같이 공식 견적서를 송부할 예정이오니 검토 부탁드립니다.\n\n';
+
+  let linesInternal =
+    '📄 KORBAN EXPRESS 특송 요율 산출 근거서 \n\n' +
+    '1. 박스별 산출 내역\n----------------------------------\n';
 
   boxes.forEach((box, idx)=>{
     const w = +box.querySelector('.w').value || 0;
@@ -431,26 +656,42 @@ function calc(){
   // rounding
   const charged = Math.ceil((Math.max(realSum, volSum))/roundUnit)*roundUnit;
 
-  // rate lookup
-  const {bracket, price} = findPrice(charged);
+  // rate lookup (A/B/C)
+  const {bracket, price, appliedBand} = findPrice(charged);
 
   // KPIs
   realSumEl.textContent = `${realSum.toFixed(1)} kg`;
   volSumEl.textContent  = `${volSum.toFixed(1)} kg`;
   chgWeightEl.textContent = `${(charged%1===0?charged.toFixed(0):charged.toFixed(1))} kg (요율 ${bracket}kg)`;
 
+  const appliedBandLabel = bandLabel(appliedBand);
+  const goodsUI = goodsConfig.ui;
+
   // Customer text
+  linesCustomer += `물품 유형: ${goodsUI}\n`;
+  linesCustomer += `적용 요율 카테고리: ${appliedBandLabel}\n\n`;
   linesCustomer += `총 박스 수: ${boxes.length}개\n`;
   linesCustomer += `총 실제무게: ${realSum.toFixed(1)} kg\n총 부피무게: ${volSum.toFixed(1)} kg\n`;
   linesCustomer += `청구무게: ${charged.toFixed(roundUnit===1?0:1)} kg\n`;
   linesCustomer += `청구 운임: ${fmt(price)} 원\n`;
-  linesCustomer += `*현지 통관 사정에 따라 추가요금이 발생할 수 있습니다. \n\n 감사합니다.`;
+
+  if(currentBand()==='C' && appliedBand==='B'){
+    linesCustomer += `\n※ 문서류(Documents) 요율은 2kg까지 적용 가능하며,\n   2kg 초과분은 일반 화물(B) 요율로 산정되었습니다.\n`;
+  }
+
+  linesCustomer += `\n*현지 통관 시 물품에 따라 추가 세금·부가세가 발생할 수 있습니다.\n\n감사합니다.`;
 
   // Internal text
   linesInternal += `2. 청구 기준 및 요금\n----------------------------------\n`;
-  linesInternal += `- 총 실제무게: ${realSum.toFixed(1)} kg\n- 총 부피무게: ${volSum.toFixed(1)} kg\n`;
+  linesInternal += `- 물품 유형: ${goodsUI}\n`;
+  linesInternal += `- 기본 선택 요율 밴드: ${bandLabel(currentBand())}\n`;
+  linesInternal += `- 실제 적용 요율 밴드: ${appliedBandLabel}\n`;
+  if(currentBand()==='C' && appliedBand==='B'){
+    linesInternal += `  · 문서류 2kg 초과로 일반 화물(B) 요율 자동 적용\n`;
+  }
+  linesInternal += `\n- 총 실제무게: ${realSum.toFixed(1)} kg\n- 총 부피무게: ${volSum.toFixed(1)} kg\n`;
   linesInternal += `- 총 청구무게: ${charged.toFixed(roundUnit===1?0:1)} kg\n`;
-  linesInternal += `- 요율 기준 구간: ${bracket} kg\n- 적용 운임 단가: ${fmt(price)} 원\n- 고객유형: ${(document.querySelector('input[name="cust"]:checked').value==='company'?'기업(Private Company)':'개인(Premium)')}\n`;
+  linesInternal += `- 요율 기준 구간: ${bracket} kg\n- 적용 운임 단가: ${fmt(price)} 원\n`;
 
   customerOut.textContent = linesCustomer;
   internalOut.textContent  = linesInternal;
@@ -458,8 +699,11 @@ function calc(){
 
 /* ---------- events ---------- */
 function init(){
+  renderSchedule(scheduleBases);
   buildBoxes(+boxCountEl.value);
+  syncGoodsHelp();
   syncRateTable();
+  updateBandBadge();   // ✅ 기본 뱃지 텍스트 세팅
   calc();
 }
 document.addEventListener('DOMContentLoaded', init);
@@ -468,10 +712,18 @@ boxCountEl.addEventListener('input', e=>{
   const n = Math.max(1, +e.target.value||1);
   buildBoxes(n); calc();
 });
-document.querySelectorAll('input[name="cust"]').forEach(r=>r.addEventListener('change',()=>{syncRateTable(); calc();}));
 divisorEl.addEventListener('change', calc);
 roundingEl.addEventListener('change', calc);
-addBoxBtn.addEventListener('click', ()=>{ boxCountEl.value = (+boxCountEl.value||1)+1; buildBoxes(+boxCountEl.value); calc(); });
+addBoxBtn.addEventListener('click', ()=>{
+  boxCountEl.value = (+boxCountEl.value||1)+1;
+  buildBoxes(+boxCountEl.value);
+  calc();
+});
+goodsTypeEl.addEventListener('change', ()=>{
+  syncGoodsHelp();
+  syncRateTable();
+  calc();
+});
 </script>
 </body>
 </html>
