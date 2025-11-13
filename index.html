@@ -252,7 +252,7 @@
           </div>
         
           <!-- 오른쪽: 박스 추가 버튼 & (숨김) 내부 옵션 -->
-          <!-- <div class="right">
+          <div class="right">
             <span class="pill hidden">부피 분모</span>
             <select id="divisor" class="hidden">
               <option value="5000" selected>5000 (코반)</option>
@@ -263,8 +263,8 @@
               <option value="0.5" selected>0.5 kg</option>
             </select>
         
-            <button id="addBox" class="btn">박스 추가</button>
-          </div> -->
+            <!-- <button id="addBox" class="btn">박스 추가</button> -->
+          </div>
         </div>
         
 
@@ -478,9 +478,9 @@ function currentBand(){
 }
 
 function bandLabel(band){
-  if(band === 'A') return 'A요율 – 공산품 (General Consumer Goods)';
-  if(band === 'B') return 'B요율 – 일반잡화·식품·의류·기계부품 (General Cargo)';
-  return 'C요율 – 일반 서류 (Documents · 2kg까지)';
+  if(band === 'A') return 'A – 공산품 (General Consumer Goods)';
+  if(band === 'B') return 'B – 일반잡화·식품·의류·기계부품 (General Cargo)';
+  return 'C – 일반 서류 (Documents · 2kg까지)';
 }
 
 
